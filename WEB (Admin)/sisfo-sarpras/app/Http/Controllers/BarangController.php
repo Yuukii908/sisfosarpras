@@ -9,9 +9,10 @@ use Illuminate\Http\Request;
 class BarangController extends Controller
 {
    public function index()
-{
+{    
     $barangs = Barang::with('category')->get();
     return view('barang.index', compact('barangs'));
+    return Barang::select('id', 'nama')->get();
 }
 
 

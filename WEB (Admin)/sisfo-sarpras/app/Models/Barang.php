@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\category;
 
 class Barang extends Model
 {
@@ -10,7 +11,7 @@ class Barang extends Model
 
 public function category()
 {
-    return $this->belongsTo(Category::class);
+    return $this->belongsTo(Category::class, 'category_id');
 }
 
 }

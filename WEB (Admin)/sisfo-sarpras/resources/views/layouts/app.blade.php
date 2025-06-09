@@ -76,6 +76,8 @@
         </div>
     @endif
 
+    
+
    <!-- Sidebar -->
 <div id="sidebar">
     <ul>

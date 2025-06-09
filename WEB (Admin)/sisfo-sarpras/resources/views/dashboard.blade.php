@@ -2,32 +2,43 @@
 
 @section('content')
 <h2 class="mb-4">Dashboard</h2>
-<div class="row">
-    <div class="col-md-4">
-        <div class="card bg-primary text-white rounded-0">
-            <div class="card-body">
-                Total Barang: {{ $jumlah_barang }}
+<div class="row g-3">
+    <!-- Total Barang -->
+    <div class="col-md-3">
+        <div class="card text-white bg-primary h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <h5 class="card-title"><i class="fas fa-box"></i> Barang Tersedia</h5>
+                <p class="card-text fs-4">{{ $jumlah_barang }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card bg-info text-white rounded-0">
-            <div class="card-body">
-                Peminjaman Aktif: {{ $jumlah_peminjaman }}
+
+    <!-- Barang Dipinjam -->
+    <div class="col-md-3">
+        <div class="card text-white bg-info h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <h5 class="card-title"><i class="fas fa-hand-holding"></i> Barang Dipinjam</h5>
+                <p class="card-text fs-4">{{ $jumlah_barang_dipinjam }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card bg-success text-white rounded-0">
-            <div class="card-body">
-                Pengembalian Tercatat: {{ $jumlah_pengembalian }}
+
+    <!-- Barang Dikembalikan -->
+    <div class="col-md-3">
+        <div class="card text-white bg-success h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <h5 class="card-title"><i class="fas fa-undo"></i> Barang Dikembalikan</h5>
+                <p class="card-text fs-4">{{ $jumlah_barang_dikembalikan }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4 mt-3">
-        <div class="card bg-danger text-white rounded-0">
-            <div class="card-body">
-                Jumlah User: {{ $jumlah_user }}
+
+    <!-- User Online -->
+    <div class="col-md-3">
+        <div class="card text-white bg-warning h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <h5 class="card-title"><i class="fas fa-user-check"></i> User Online</h5>
+                <p class="card-text fs-4">{{ $jumlah_user_online }}</p>
             </div>
         </div>
     </div>

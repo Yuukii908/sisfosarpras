@@ -11,7 +11,7 @@
         <img src="{{ asset('assets/img/logo.png') }}" alt="Logo" class="logo-small">
         
         <div class="welcome-text">
-            <h2>Daftar Akun SISFO SARPRAS</h2>
+            <h2>Daftarkan Akun Pengguna</h2>
             <p>Tambahkan Pengguna</p>
         </div>
 
