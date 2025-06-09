@@ -1,17 +1,20 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-const baseUrl = 'http://10.0.2.2:8000/api';
+const baseUrl = 'http://127.0.0.1:800/api';
 
   class ApiService {
   static Future<http.Response> login(String email, String password) async {
-    final url = Uri.parse('http://10.0.2.2:8000/api/login');
+    final url = Uri.parse('http://127.0.0.1:8000/api/login');
     final response = await http.post(
        url,
     headers: {'Accept': 'application/json'},
     body: {'email': email, 'password': password},
   ).timeout(const Duration(seconds: 10));
   return response;
+
+  
+
 }
 
   static Future<http.Response> register(String name, String email, String password) {

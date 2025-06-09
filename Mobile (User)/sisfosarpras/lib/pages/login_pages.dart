@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../api/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,10 +20,18 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => loading = false);
 
     if (res.statusCode == 200) {
+      final data = jsonDecode(res.body);
+      final token = data['token'];
+      final user = data['user'];
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+      await prefs.setInt('user_id', user['id']);
+
       Navigator.pushReplacementNamed(context, '/dashboard');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login gagal')),
+        SnackBar(content: Text('Login gagal: ${res.reasonPhrase}')),
       );
     }
   }
@@ -86,13 +95,6 @@ class _LoginPageState extends State<LoginPage> {
                           child: loading
                               ? const CircularProgressIndicator(color: Colors.white)
                               : const Text('Login', style: TextStyle(fontSize: 16)),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pushNamed(context, '/register'),
-                        child: const Text(
-                          "Belum punya akun? Daftar",
-                          style: TextStyle(color: Colors.blue),
                         ),
                       ),
                     ],
