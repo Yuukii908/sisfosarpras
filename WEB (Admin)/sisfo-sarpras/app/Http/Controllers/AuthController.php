@@ -15,29 +15,16 @@ class AuthController extends Controller
         return view('auth.login');
     }
     
-    public function login(Request $request) {
-        // $admin = Admin::where('email', $request->email)->first();
-    
-        // if ($admin && Hash::check($request->password, $admin->password)) {
-        //     session(['admin_id' => $admin->id]);
-        //     $admin->update(['last_seen' => now()]);
-        //     return redirect('/dashboard');
-        // }
-        // return back()->with('error', 'Login gagal');
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+    public function login(Request $request)
+{
+    $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
- 
-            return redirect()->intended('dashboard');
-        }
- 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+    if (Auth::attempt($credentials)) {
+        return redirect()->intended('/dashboard'); // arahkan ke dashboard
+    } else {
+        return back()->withErrors(['login' => 'Email atau password salah']);
+    }
+
 
     }
     

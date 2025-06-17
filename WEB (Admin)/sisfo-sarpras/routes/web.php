@@ -9,26 +9,24 @@ use App\Http\Controllers\PengembalianController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\CategoryController;
 
+
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('post-login');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [RegisterController::class, 'create'])->name('register');
 Route::post('/register', [RegisterController::class, 'store']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::middleware('auth')->group(function () {
-    
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
+
 
     Route::resource('/barang', BarangController::class);
     Route::resource('/barang', BarangController::class);
 
-    Route::get('/peminjaman', [PeminjamanController::class, 'index']);
+    Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
     Route::post('/peminjaman', [PeminjamanController::class, 'store']);
 
     Route::get('/pengembalian', [PengembalianController::class, 'index']);
     Route::post('/pengembalian', [PengembalianController::class, 'store']);
-
-    
-});
 
 // Route::get('/index', function (){
 //     return view('category.index');

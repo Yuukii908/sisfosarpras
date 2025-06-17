@@ -27,6 +27,6 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'User berhasil didaftarkan');
+        return redirect()->route('/dashboard')->with('success', 'User berhasil didaftarkan');
     }
 }

@@ -1,56 +1,102 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sisfo_sarpras/api/api_peminjaman.dart';
 import 'package:sisfo_sarpras/models/peminjaman.dart';
 
-class ApiPeminjaman {
-  static const baseUrl = 'http://127.0.0.1:8000/api';
+class RiwayatPeminjamanPage extends StatefulWidget {
+  const RiwayatPeminjamanPage({super.key});
 
-  static Future<List<PeminjamanModel>> fetchPeminjaman(String token) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/peminjaman'),
-      headers: {'Authorization': 'Bearer $token'},
-    );
+  @override
+  State<RiwayatPeminjamanPage> createState() => _RiwayatPeminjamanPageState();
+}
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body)['data'];
-      return List<PeminjamanModel>.from(
-        data.map((item) => PeminjamanModel.fromJson(item)),
+class _RiwayatPeminjamanPageState extends State<RiwayatPeminjamanPage> {
+  List<PeminjamanModel> _peminjamanList = [];
+  bool _isLoading = true;
+  int _selectedIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPeminjaman();
+  }
+
+  Future<void> _loadPeminjaman() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+
+    try {
+      final list = await ApiPeminjaman.fetchPeminjaman(token);
+      setState(() {
+        _peminjamanList = list;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Gagal memuat data peminjaman")),
       );
-    } else {
-      throw Exception('Gagal memuat data peminjaman');
     }
   }
 
-  static Future<bool> tambahPeminjaman({
-    required int barangId,
-    required String tanggalPinjam,
-    required String tanggalKembali,
-    required String token,
-  }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/peminjaman'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-      },
-      body: {
-        'barang_id': barangId.toString(),
-        'tanggal_pinjam': tanggalPinjam,
-        'tanggal_kembali': tanggalKembali,
-      },
-    );
-
-    return response.statusCode == 201;
+  void _onItemTapped(int index) {
+    setState(() => _selectedIndex = index);
+    if (index == 0) {
+      Navigator.pushNamed(context, '/dashboard');
+    } else if (index == 2) {
+      Navigator.pushNamed(context, '/profil');
+    }
   }
 
-  static Future<bool> ubahStatusPeminjaman(int id, String token) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/peminjaman/$id/ubah-status'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-      },
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Riwayat Peminjaman'),
+        backgroundColor: Colors.blue[800],
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _peminjamanList.isEmpty
+              ? const Center(child: Text("Belum ada data peminjaman"))
+              : ListView.builder(
+                  itemCount: _peminjamanList.length,
+                  itemBuilder: (context, index) {
+                    final item = _peminjamanList[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      child: ListTile(
+                        title: Text(item.barang),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("tanggal_pinjam: ${item.tanggalPinjam}"),
+                            Text("Status: ${item.status}"),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blue[800],
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'Peminjaman',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Pengembalian',
+          ),
+        ],
+      ),
     );
-    return response.statusCode == 200;
   }
 }

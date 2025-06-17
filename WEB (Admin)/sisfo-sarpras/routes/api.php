@@ -27,13 +27,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('barang', BarangApiController::class);
     
     // Peminjaman routes
+    Route::middleware('auth:sanctum')->group(function () {
     Route::post('/peminjaman', [PeminjamanApiController::class, 'store']);
     Route::get('/peminjaman', [PeminjamanApiController::class, 'index']);
     Route::get('/peminjaman/{id}', [PeminjamanApiController::class, 'show']);
     Route::put('/peminjaman/{id}', [PeminjamanApiController::class, 'update']);
     Route::delete('/peminjaman/{id}', [PeminjamanApiController::class, 'destroy']);
     Route::put('/peminjaman/{id}/status', [PeminjamanApiController::class, 'updateStatus']);
-    
+    Route::put('/peminjaman/{id}/setujui', [PeminjamanApiController::class, 'setujui']);
+    Route::put('/peminjaman/{id}/tolak', [PeminjamanApiController::class, 'tolak']);
+    });
     // Pengembalian routes
     Route::post('/pengembalian', [PengembalianApiController::class, 'store']);
     Route::get('/riwayat-pengembalian', [PengembalianApiController::class, 'riwayat']);

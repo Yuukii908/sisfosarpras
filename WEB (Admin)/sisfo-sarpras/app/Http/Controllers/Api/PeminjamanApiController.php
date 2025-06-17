@@ -29,6 +29,7 @@ class PeminjamanApiController extends Controller
         $request->validate([
             'barang_id' => 'required|exists:barangs,id',
             'tanggal_pinjam' => 'required|date',
+            'jumlah' => 'required|integer|min:1',
         ]);
 
         // Get authenticated user from request (handled by route middleware)
@@ -38,6 +39,7 @@ class PeminjamanApiController extends Controller
             'user_id' => $user->id,
             'barang_id' => $request->barang_id,
             'tanggal_pinjam' => $request->tanggal_pinjam,
+            'jumlah' => $request->jumlah,
             'keterangan' => $request->keterangan,
             'status' => 'Menunggu',
         ]);
@@ -48,6 +50,30 @@ class PeminjamanApiController extends Controller
             'data' => $peminjaman,
         ]);
     }
+
+   public function setujui($id)
+{
+    $peminjaman = Peminjaman::findOrFail($id);
+    $peminjaman->status = 'Disetujui';
+    $peminjaman->save();
+
+    return response()->json(['message' => 'Peminjaman disetujui'], 200);
+}
+
+
+public function tolak($id)
+{
+    $peminjaman = Peminjaman::findOrFail($id);
+    if ($peminjaman->status != 'Menunggu') {
+        return response()->json(['message' => 'Peminjaman sudah diproses sebelumnya'], 400);
+    }
+
+    $peminjaman->status = 'Ditolak';
+    $peminjaman->save();
+
+    return response()->json(['message' => 'Peminjaman ditolak']);
+}
+
 
     // Alternative store method if you want to pass user_id manually
     public function storeAlternative(Request $request)
@@ -92,40 +118,32 @@ class PeminjamanApiController extends Controller
     }
 
     // Perbarui status peminjaman (contohnya: dikembalikan)
-    public function update(Request $request, $id)
-    {
-        $peminjaman = Peminjaman::find($id);
+   public function update(Request $request, $id)
+{
+    $peminjaman = Peminjaman::findOrFail($id);
 
-        if (!$peminjaman) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data tidak ditemukan'
-            ], 404);
-        }
+    $request->validate([
+        'status' => 'required|in:Dipinjam,Dikembalikan',
+        'tanggal_kembali' => 'nullable|date',
+    ]);
 
-        $validator = Validator::make($request->all(), [
-            'status'           => 'required|in:dipinjam,dikembalikan',
-            'tanggal_kembali'  => 'nullable|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors'  => $validator->errors(),
-            ], 422);
-        }
-
-        $peminjaman->update([
-            'status'           => $request->status,
-            'tanggal_kembali'  => $request->tanggal_kembali,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Data peminjaman berhasil diperbarui',
-            'data'    => $peminjaman,
-        ]);
+    if ($request->status == 'Dipinjam' && $peminjaman->status != 'Dipinjam') {
+        $barang = Barang::find($peminjaman->barang_id);
+        $barang->stok -= $peminjaman->jumlah;
+        $barang->save();
     }
+
+    $peminjaman->update([
+        'status' => $request->status,
+        'tanggal_kembali' => $request->tanggal_kembali,
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Status peminjaman diperbarui',
+        'data' => $peminjaman,
+    ]);
+}
 
     // Hapus data peminjaman
     public function destroy($id)

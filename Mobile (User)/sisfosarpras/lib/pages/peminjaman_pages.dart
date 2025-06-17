@@ -37,7 +37,7 @@ class _PeminjamanPageState extends State<PeminjamanPage> {
       }
 
       final data = await BarangService.fetchBarang();
-      
+
       if (mounted) {
         setState(() {
           barangList = data;
@@ -50,7 +50,7 @@ class _PeminjamanPageState extends State<PeminjamanPage> {
           isLoading = false;
           errorMessage = e.toString();
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Gagal memuat barang: $e'),
@@ -86,6 +86,40 @@ class _PeminjamanPageState extends State<PeminjamanPage> {
       body: RefreshIndicator(
         onRefresh: _onRefresh,
         child: _buildBody(),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 1, // Peminjaman tab
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushReplacementNamed(context, '/dashboard');
+          } else if (index == 1) {
+            // Stay on current page
+          } else if (index == 2) {
+            Navigator.pushReplacementNamed(context, '/riwayat');
+          } else if (index == 3) {
+            Navigator.pushReplacementNamed(context, '/profil');
+          }
+        },
+        selectedItemColor: Colors.blue[800],
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Beranda',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inventory_2),
+            label: 'Peminjaman',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'Riwayat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profil',
+          ),
+        ],
       ),
     );
   }
@@ -202,7 +236,6 @@ class _PeminjamanPageState extends State<PeminjamanPage> {
                               TambahPeminjamanPage(barangId: barang.id),
                         ),
                       );
-                      // Refresh list if peminjaman was successful
                       if (result == true) {
                         fetchBarang();
                       }
@@ -256,7 +289,7 @@ class _PeminjamanPageState extends State<PeminjamanPage> {
         ),
       );
     }
-    
+
     return Container(
       width: 50,
       height: 50,

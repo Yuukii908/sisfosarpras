@@ -9,25 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-  public function up()
+   public function up()
 {
     Schema::table('peminjamans', function (Blueprint $table) {
-        if (!Schema::hasColumn('peminjamans', 'status')) {
-            $table->string('status')->default('aktif');
-        }
+        $table->integer('jumlah')->default(1);
     });
 }
-
-
 
     /**
      * Reverse the migrations.
      */
-   public function down(): void
-{
-    Schema::table('peminjamans', function (Blueprint $table) {
-        $table->dropColumn('status');
-    });
-}
-
+    public function down(): void
+    {
+        Schema::table('peminjamans', function (Blueprint $table) {
+            //
+        });
+    }
 };

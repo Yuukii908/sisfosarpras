@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../api/api_pengembalian.dart';
+import '../models/pengembalian.dart'; // pastikan file model ini sudah ada
 
 class PengembalianPage extends StatefulWidget {
   const PengembalianPage({super.key});
@@ -12,6 +13,7 @@ class PengembalianPage extends StatefulWidget {
 class _PengembalianPageState extends State<PengembalianPage> {
   late Future<List<PengembalianModel>> _futureData;
   String? _token;
+  int _selectedIndex = 2;
 
   @override
   void initState() {
@@ -44,6 +46,18 @@ class _PengembalianPageState extends State<PengembalianPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Gagal mengubah status')),
       );
+    }
+  }
+
+  void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
+    setState(() => _selectedIndex = index);
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/dashboard');
+    } else if (index == 1) {
+      Navigator.pushReplacementNamed(context, '/riwayat');
+    } else if (index == 2) {
+      // Tetap di halaman ini
     }
   }
 
@@ -89,6 +103,25 @@ class _PengembalianPageState extends State<PengembalianPage> {
                 );
               },
             ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.blue[800],
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'Peminjaman',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment_turned_in),
+            label: 'Pengembalian',
+          ),
+        ],
+      ),
     );
   }
 }

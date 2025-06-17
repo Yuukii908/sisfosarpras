@@ -1,4 +1,3 @@
-
 class PeminjamanModel {
   final int id;
   final String peminjam;
@@ -6,6 +5,7 @@ class PeminjamanModel {
   final String kategori;
   final int jumlah;
   final String status;
+  final String tanggalPinjam;
 
   PeminjamanModel({
     required this.id,
@@ -14,6 +14,7 @@ class PeminjamanModel {
     required this.kategori,
     required this.jumlah,
     required this.status,
+    required this.tanggalPinjam,
   });
 
   factory PeminjamanModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +25,7 @@ class PeminjamanModel {
       kategori: json['kategori'],
       jumlah: json['jumlah'],
       status: json['status'],
+      tanggalPinjam: json['tanggal_pinjam'],
     );
   }
 }

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Peminjaman extends Model
 {
     protected $fillable = ['user_id', 'barang_id', 'jumlah', 'tanggal_pinjam', 'status'];
+    protected $table = 'peminjamans';
+
 
     public function barang() {
         return $this->belongsTo(Barang::class);
